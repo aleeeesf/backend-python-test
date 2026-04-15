@@ -1,0 +1,11 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/app/.venv/bin/python",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/app"
+    ],
+    "mypy-type-checker.args": [
+        "--config-file=${workspaceFolder}/app/pyproject.toml"
+    ],
+    "mypy-type-checker.cwd": "${workspaceFolder}/app",
+    "mypy-type-checker.importStrategy": "fromEnvironment"
+}
