@@ -65,11 +65,13 @@ async def process_request(
     if process_result.status == NotificationStatus.SENT:
         return Response(status_code=status.HTTP_200_OK)
 
+    if process_result.should_process:
+        process_dispatcher.dispatch(request_id=request_id)  # process in background
+        return Response(status_code=status.HTTP_202_ACCEPTED)
+
     if process_result.status == NotificationStatus.PROCESSING:
         return Response(status_code=status.HTTP_202_ACCEPTED)
 
-    if process_result.should_process:
-        process_dispatcher.dispatch(request_id=request_id)  # process in background
     return Response(status_code=status.HTTP_202_ACCEPTED)
 
 
