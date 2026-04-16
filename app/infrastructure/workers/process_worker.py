@@ -5,6 +5,10 @@ from domain.ports.process_dispatcher import ProcessDispatcher
 
 
 class ProcessWorker(ProcessDispatcher):
+    """
+    Worker that processes requests in the background.
+    """
+
     def __init__(self, process_request_use_case: ProcessRequestUseCase) -> None:
         self._process_request_use_case = process_request_use_case
         self._tasks: set[asyncio.Task[None]] = set()

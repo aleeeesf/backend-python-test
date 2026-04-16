@@ -3,6 +3,8 @@ from pydantic_settings import BaseSettings
 
 
 class ExternalProviderSettings(BaseSettings):
+    """Settings for the external notification provider."""
+
     api_url: str = Field(
         default="http://localhost:3001",
         description="External provider API URL",
@@ -14,6 +16,8 @@ class ExternalProviderSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
+    """Global application settings."""
+
     external_provider: ExternalProviderSettings = ExternalProviderSettings()
 
 

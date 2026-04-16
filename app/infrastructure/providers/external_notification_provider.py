@@ -22,6 +22,24 @@ class ExternalNotificationProvider(NotificationProvider):
         message: str,
         type: NotificationType,
     ) -> ProviderResult:
+        """
+        Send a notification to a recipient using the external provider.
+
+        Args:
+            to: The recipient of the notification.
+            message: The message to send.
+            type: The notification type.
+
+        Returns:
+            ProviderResult: The result of the notification send operation.
+
+        Raises:
+            ProviderNetworkError: If there is a network error when connecting to the provider.
+            ProviderUnauthorizedError: If the API key is invalid.
+            ProviderRateLimitError: If the provider rate limit is exceeded.
+            ProviderServerError: If the provider returns a server error.
+            ProviderResponseError: If the provider returns an unexpected response.
+        """
         headers = {
             "X-API-Key": self._api_key,
             "Content-Type": "application/json",

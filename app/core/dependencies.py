@@ -17,19 +17,23 @@ from infrastructure.workers.process_worker import ProcessWorker
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
+    """Get the application settings instance."""
     return settings
 
 
 @lru_cache(maxsize=1)
 def get_requests_repository() -> InMemoryRequestsRepository:
+    """Get the requests repository instance."""
     return InMemoryRequestsRepository()
 
 
 def get_create_request_use_case() -> CreateRequestUseCase:
+    """Get the CreateRequestUseCase instance."""
     return CreateRequestUseCase(get_requests_repository())
 
 
 def get_notification_provider() -> NotificationProvider:
+    """Get the notification provider instance."""
     app_settings = get_settings()
     provider_settings = app_settings.external_provider
     return ExternalNotificationProvider(
@@ -39,6 +43,7 @@ def get_notification_provider() -> NotificationProvider:
 
 
 def get_process_request_use_case() -> ProcessRequestUseCase:
+    """Get the ProcessRequestUseCase instance."""
     return ProcessRequestUseCase(
         requests_repository=get_requests_repository(),
         notification_provider=get_notification_provider(),
@@ -46,9 +51,11 @@ def get_process_request_use_case() -> ProcessRequestUseCase:
 
 
 def get_request_status_use_case() -> GetRequestStatusUseCase:
+    """Get the GetRequestStatusUseCase instance."""
     return GetRequestStatusUseCase(get_requests_repository())
 
 
 @lru_cache(maxsize=1)
 def get_process_dispatcher() -> ProcessDispatcher:
+    """Get the process dispatcher instance."""
     return ProcessWorker(get_process_request_use_case())
