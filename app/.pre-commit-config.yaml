@@ -4,7 +4,7 @@ repos:
       - id: ruff-format
         name: ruff format
         files: ^app/
-        entry: app/.venv/bin/ruff format
+        entry: app/.venv/bin/ruff format --config app/pyproject.toml
         language: system
         types: [python]
         pass_filenames: true
@@ -12,7 +12,7 @@ repos:
       - id: ruff-check
         name: ruff check
         files: ^app/
-        entry: app/.venv/bin/ruff check --fix
+        entry: app/.venv/bin/ruff check --fix --config app/pyproject.toml
         language: system
         types: [python]
         pass_filenames: true

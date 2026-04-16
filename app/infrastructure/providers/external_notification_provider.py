@@ -1,4 +1,5 @@
 import httpx
+
 from domain.entities.request import NotificationType
 from domain.exceptions.provider import (
     ProviderNetworkError,
