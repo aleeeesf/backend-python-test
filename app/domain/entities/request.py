@@ -21,16 +21,19 @@ class NotificationRequest(BaseModel):
 
     id: str = Field(
         ...,
+        min_length=1,
         examples=["123e4567-e89b-12d3-a456-426614174000"],
         description="The ID of the notification request.",
     )
     to: str = Field(
         ...,
+        min_length=1,
         examples=["user@example.com"],
         description="The recipient of the notification.",
     )
     message: str = Field(
         ...,
+        min_length=1,
         examples=["Your verification code is 1234"],
         description="The message to send.",
     )

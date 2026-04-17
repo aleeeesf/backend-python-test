@@ -4,8 +4,8 @@ from domain.entities.request import NotificationStatus, NotificationType
 
 
 class CreateRequestDTO(BaseModel):
-    to: str = Field(..., examples=["user@example.com"])
-    message: str = Field(..., examples=["Your verification code is 1234"])
+    to: str = Field(..., min_length=1, examples=["user@example.com"])
+    message: str = Field(..., min_length=1, examples=["Your verification code is 1234"])
     type: NotificationType = Field(..., examples=["email"])
 
 
