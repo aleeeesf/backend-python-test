@@ -62,7 +62,12 @@ class ExternalNotificationProvider(NotificationProvider):
             raise ProviderNetworkError("Provider connection error") from error
 
         if response.status_code == 200:
-            data = response.json()
+            try:
+                data = response.json()
+            except (ValueError, KeyError) as error:
+                raise ProviderResponseError(
+                    "Invalid JSON response from provider"
+                ) from error
             provider_id = data.get("provider_id")
             status = data.get("status")
             if not isinstance(provider_id, str) or not isinstance(status, str):

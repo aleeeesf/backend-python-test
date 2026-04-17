@@ -1,20 +1,19 @@
-"""Unit tests for CreateRequestUseCase."""
+"""Unit tests for create_request function."""
 
 import pytest
 
 from application.dtos import CreateRequestDTO
-from application.use_cases.create_request import CreateRequestUseCase
+from application.use_cases.create_request import create_request
 from domain.entities.request import NotificationStatus
 
 
-class TestCreateRequestUseCase:
-    """Test suite for CreateRequestUseCase."""
+class TestCreateRequest:
+    """Test suite for create_request function."""
 
     @pytest.mark.asyncio
     async def test_creates_request_when_valid_input(self, requests_repository):
-        """Create use case persists a queued request and returns its ID."""
+        """Create function persists a queued request and returns its ID."""
         # Arrange
-        use_case = CreateRequestUseCase(requests_repository=requests_repository)
         create_request_dto = CreateRequestDTO(
             to="user@example.com",
             message="Test notification",
@@ -22,7 +21,7 @@ class TestCreateRequestUseCase:
         )
 
         # Act
-        request_id = await use_case.execute(create_request_dto)
+        request_id = await create_request(create_request_dto, requests_repository)
         stored_request = await requests_repository.get_by_id(request_id)
 
         # Assert

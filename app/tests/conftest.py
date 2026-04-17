@@ -1,4 +1,13 @@
-"""Shared fixtures for unit and integration tests."""
+"""Shared fixtures for unit and integration tests.
+
+IMPORTANT: Fixtures reset state between tests to prevent pollution.
+If you add new attributes to Fake* classes, MUST add cleanup logic here.
+
+Patterns:
+- Fakes: Deterministic, testable versions of domain objects
+- Stubs: Simple implementations recording calls without side effects
+- InMemory: Real implementations using in-process storage (not mocks)
+"""
 
 import sys
 from collections.abc import Generator
@@ -10,15 +19,10 @@ from fastapi.testclient import TestClient
 # Ensure tests resolve imports from the app runtime root.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from application.use_cases.create_request import CreateRequestUseCase
-from application.use_cases.get_request_status import GetRequestStatusUseCase
-from application.use_cases.process_request import ProcessRequestUseCase
 from core.dependencies import (
-    get_create_request_use_case,
     get_notification_provider,
     get_process_dispatcher,
-    get_process_request_use_case,
-    get_request_status_use_case,
+    get_requests_repository,
 )
 from domain.entities.request import NotificationRequest, NotificationStatus
 from domain.exceptions.provider import (
@@ -37,12 +41,21 @@ from main import app as fastapi_app
 
 
 class FakeNotificationProvider:
-    """Simple fake provider configurable per test."""
+    """Deterministic fake provider for testing.
+
+    Allows configuring success/failure scenarios per test.
+    Records all send() calls for verification.
+    """
 
     def __init__(self) -> None:
         self.result = ProviderResult(provider_id="p-1234", status="delivered")
         self.side_effects: list[Exception] = []
         self.calls: list[dict[str, str]] = []
+
+    def reset(self) -> None:
+        """Reset state between tests."""
+        self.side_effects.clear()
+        self.calls.clear()
 
     async def send(self, to: str, message: str, type: str) -> ProviderResult:
         """Record the call and return the configured response."""
@@ -59,10 +72,17 @@ class FakeNotificationProvider:
 
 
 class StubProcessDispatcher(ProcessDispatcher):
-    """Test dispatcher that records enqueued requests without background execution."""
+    """Stub dispatcher recording requests without executing background work.
+
+    Used for integration tests to avoid async background noise.
+    """
 
     def __init__(self) -> None:
         self.dispatched_request_ids: list[str] = []
+
+    def reset(self) -> None:
+        """Reset state between tests."""
+        self.dispatched_request_ids.clear()
 
     def dispatch(self, request_id: str) -> None:
         """Record dispatched request IDs."""
@@ -86,15 +106,27 @@ def _requests_repository_fixture() -> InMemoryRequestsRepository:
 
 
 @pytest.fixture(name="fake_notification_provider")
-def _fake_notification_provider_fixture() -> FakeNotificationProvider:
-    """Fake external notification provider."""
-    return FakeNotificationProvider()
+def _fake_notification_provider_fixture() -> Generator[
+    FakeNotificationProvider, None, None
+]:
+    """Fake external notification provider.
+
+    Resets state after each test to prevent state pollution.
+    """
+    provider = FakeNotificationProvider()
+    yield provider
+    provider.reset()
 
 
 @pytest.fixture(name="stub_process_dispatcher")
-def _stub_process_dispatcher_fixture() -> StubProcessDispatcher:
-    """Dispatcher stub for route integration tests."""
-    return StubProcessDispatcher()
+def _stub_process_dispatcher_fixture() -> Generator[StubProcessDispatcher, None, None]:
+    """Dispatcher stub for route integration tests.
+
+    Resets state after each test to prevent state pollution.
+    """
+    dispatcher = StubProcessDispatcher()
+    yield dispatcher
+    dispatcher.reset()
 
 
 # ==============================================================================
@@ -175,28 +207,14 @@ def _client_fixture(
     fake_notification_provider: FakeNotificationProvider,
     stub_process_dispatcher: StubProcessDispatcher,
 ) -> Generator[TestClient, None, None]:
-    """FastAPI test client with dependency overrides."""
+    """FastAPI test client with dependency overrides.
 
-    def _get_create_request_use_case() -> CreateRequestUseCase:
-        return CreateRequestUseCase(requests_repository)
-
-    def _get_process_request_use_case() -> ProcessRequestUseCase:
-        return ProcessRequestUseCase(
-            requests_repository=requests_repository,
-            notification_provider=fake_notification_provider,
-        )
-
-    def _get_request_status_use_case() -> GetRequestStatusUseCase:
-        return GetRequestStatusUseCase(requests_repository)
-
-    fastapi_app.dependency_overrides[get_create_request_use_case] = (
-        _get_create_request_use_case
-    )
-    fastapi_app.dependency_overrides[get_process_request_use_case] = (
-        _get_process_request_use_case
-    )
-    fastapi_app.dependency_overrides[get_request_status_use_case] = (
-        _get_request_status_use_case
+    Wires fake/stub implementations into FastAPI dependency injection.
+    Clears overrides after yielding to prevent cross-contamination.
+    """
+    # Override repository, provider, and dispatcher dependencies
+    fastapi_app.dependency_overrides[get_requests_repository] = lambda: (
+        requests_repository
     )
     fastapi_app.dependency_overrides[get_notification_provider] = lambda: (
         fake_notification_provider

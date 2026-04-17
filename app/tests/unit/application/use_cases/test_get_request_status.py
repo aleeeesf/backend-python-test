@@ -1,21 +1,18 @@
-"""Unit tests for GetRequestStatusUseCase."""
+"""Unit tests for get_request_status function."""
 
 import pytest
 
-from application.use_cases.get_request_status import GetRequestStatusUseCase
+from application.use_cases.get_request_status import get_request_status
 
 
-class TestGetRequestStatusUseCase:
-    """Test suite for GetRequestStatusUseCase."""
+class TestGetRequestStatus:
+    """Test suite for get_request_status function."""
 
     @pytest.mark.asyncio
     async def test_returns_none_when_request_does_not_exist(self, requests_repository):
-        """Status use case returns None for unknown request IDs."""
-        # Arrange
-        use_case = GetRequestStatusUseCase(requests_repository=requests_repository)
-
+        """Status function returns None for unknown request IDs."""
         # Act
-        result = await use_case.execute("missing-request")
+        result = await get_request_status("missing-request", requests_repository)
 
         # Assert
         assert result is None
@@ -26,13 +23,12 @@ class TestGetRequestStatusUseCase:
         requests_repository,
         queued_request,
     ):
-        """Status use case returns request ID and status when request exists."""
+        """Status function returns request ID and status when request exists."""
         # Arrange
-        use_case = GetRequestStatusUseCase(requests_repository=requests_repository)
         await requests_repository.save(queued_request)
 
         # Act
-        result = await use_case.execute(queued_request.id)
+        result = await get_request_status(queued_request.id, requests_repository)
 
         # Assert
         assert result is not None

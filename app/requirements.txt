@@ -6,3 +6,4 @@ pydantic-settings==2.2.1
 tenacity==8.2.3
 pytest>=8.3.0
 pytest-asyncio>=0.23.0
+respx>=0.21.0

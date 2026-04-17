@@ -13,4 +13,5 @@
     ],
     "mypy-type-checker.cwd": "${workspaceFolder}/app",
     "mypy-type-checker.importStrategy": "fromEnvironment",
+    "workbench.colorTheme": "Default Dark Modern",
 }
