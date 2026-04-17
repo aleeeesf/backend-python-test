@@ -20,5 +20,9 @@ class Settings(BaseSettings):
 
     external_provider: ExternalProviderSettings = ExternalProviderSettings()
 
+    # Logging configuration
+    logging_enabled: bool = False  # Disabled by default (tests shouldn't log)
+    log_level: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
 
 settings = Settings()
