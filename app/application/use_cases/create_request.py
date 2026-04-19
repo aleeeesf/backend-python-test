@@ -3,7 +3,7 @@
 from uuid import uuid4
 
 from application.dtos import CreateRequestDTO
-from domain.entities.request import NotificationRequest, NotificationStatus
+from domain.models.request import NotificationRequest, NotificationStatus
 from domain.ports.requests_repository import RequestsRepository
 
 

@@ -2,7 +2,7 @@ from typing import Protocol
 
 from pydantic import BaseModel
 
-from domain.entities.request import NotificationType
+from domain.models.request import NotificationType
 
 
 class ProviderResult(BaseModel):

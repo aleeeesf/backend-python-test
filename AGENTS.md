@@ -25,7 +25,7 @@ the external provider with retry/error handling.
 When editing files inside `app/`, use imports relative to the `app` runtime root, for example:
 - `from infrastructure.http.v1.router import v1_router`
 - `from application.dtos import CreateRequestDTO`
-- `from domain.entities.request import NotificationRequest`
+- `from domain.models.request import NotificationRequest`
 
 Do not use `from app....` imports in application code.
 

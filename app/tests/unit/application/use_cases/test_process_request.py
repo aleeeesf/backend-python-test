@@ -6,7 +6,7 @@ from application.use_cases.process_request import (
     deliver_request,
     start_process_request,
 )
-from domain.entities.request import NotificationStatus
+from domain.models.request import NotificationStatus
 
 
 class TestStartProcessRequest:
@@ -327,7 +327,7 @@ class TestDeliverRequestConcurrency:
         import asyncio
 
         # Arrange - Two different processing requests
-        from domain.entities.request import NotificationRequest
+        from domain.models.request import NotificationRequest
 
         req1 = NotificationRequest(
             id="req-1",
@@ -372,7 +372,7 @@ class TestDeliverRequestConcurrency:
         """Concurrent: different requests process independently without interference."""
         import asyncio
 
-        from domain.entities.request import NotificationRequest
+        from domain.models.request import NotificationRequest
 
         # Arrange - Two different processing requests
         req1 = NotificationRequest(

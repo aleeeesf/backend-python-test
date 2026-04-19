@@ -1,13 +1,13 @@
 import httpx
 
-from domain.entities.request import NotificationType
-from domain.exceptions.provider import (
+from domain.exceptions.notification_provider import (
     ProviderNetworkError,
     ProviderRateLimitError,
     ProviderResponseError,
     ProviderServerError,
     ProviderUnauthorizedError,
 )
+from domain.models.request import NotificationType
 from domain.ports.notification_provider import NotificationProvider, ProviderResult
 
 

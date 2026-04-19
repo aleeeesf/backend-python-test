@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from application.dtos import CreateRequestDTO, CreateResponseDTO, StatusResponseDTO
@@ -8,7 +10,7 @@ from core.dependencies import (
     get_process_dispatcher,
     get_requests_repository,
 )
-from domain.entities.request import NotificationStatus
+from domain.models.request import NotificationStatus
 from domain.ports.process_dispatcher import ProcessDispatcher
 from domain.ports.requests_repository import RequestsRepository
 
@@ -18,7 +20,9 @@ router = APIRouter(prefix="/requests", tags=["requests"])
 @router.post("", status_code=201, response_model=CreateResponseDTO)
 async def create_request_handler(
     request: CreateRequestDTO,
-    requests_repository: RequestsRepository = Depends(get_requests_repository),
+    requests_repository: Annotated[
+        RequestsRepository, Depends(get_requests_repository)
+    ],
 ) -> CreateResponseDTO:
     """
     Create a new request.
@@ -37,8 +41,10 @@ async def create_request_handler(
 @router.post("/{request_id}/process")
 async def process_request_handler(
     request_id: str,
-    requests_repository: RequestsRepository = Depends(get_requests_repository),
-    process_dispatcher: ProcessDispatcher = Depends(get_process_dispatcher),
+    requests_repository: Annotated[
+        RequestsRepository, Depends(get_requests_repository)
+    ],
+    process_dispatcher: Annotated[ProcessDispatcher, Depends(get_process_dispatcher)],
 ) -> Response:
     """
     Process a request.
@@ -73,7 +79,9 @@ async def process_request_handler(
 @router.get("/{request_id}", response_model=StatusResponseDTO)
 async def get_request_status_handler(
     request_id: str,
-    requests_repository: RequestsRepository = Depends(get_requests_repository),
+    requests_repository: Annotated[
+        RequestsRepository, Depends(get_requests_repository)
+    ],
 ) -> StatusResponseDTO:
     """
     Get the status of a request.

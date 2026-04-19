@@ -2,7 +2,7 @@
 
 import pytest
 
-from domain.entities.request import NotificationStatus
+from domain.models.request import NotificationStatus
 from infrastructure.repositories.in_memory_requests_repository import (
     InMemoryRequestsRepository,
 )

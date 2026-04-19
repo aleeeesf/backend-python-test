@@ -5,14 +5,14 @@ from datetime import datetime
 
 from application.dtos import StartProcessResultDTO
 from core.logging import get_logger
-from domain.entities.request import NotificationRequest, NotificationStatus
-from domain.exceptions.provider import (
+from domain.exceptions.notification_provider import (
     ProviderNetworkError,
     ProviderRateLimitError,
     ProviderResponseError,
     ProviderServerError,
     ProviderUnauthorizedError,
 )
+from domain.models.request import NotificationRequest, NotificationStatus
 from domain.ports.notification_provider import NotificationProvider, ProviderResult
 from domain.ports.requests_repository import RequestsRepository
 

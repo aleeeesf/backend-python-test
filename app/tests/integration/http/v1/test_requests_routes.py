@@ -2,7 +2,7 @@
 
 import asyncio
 
-from domain.entities.request import NotificationRequest, NotificationStatus
+from domain.models.request import NotificationRequest, NotificationStatus
 
 
 class TestCreateRequest:

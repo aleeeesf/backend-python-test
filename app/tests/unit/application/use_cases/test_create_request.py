@@ -4,7 +4,7 @@ import pytest
 
 from application.dtos import CreateRequestDTO
 from application.use_cases.create_request import create_request
-from domain.entities.request import NotificationStatus
+from domain.models.request import NotificationStatus
 
 
 class TestCreateRequest:
